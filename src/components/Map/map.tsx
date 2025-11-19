@@ -12,7 +12,7 @@ import {setNewSource} from "../../services/";
 
 const emptyMapData: FeatureCollection = {type: "FeatureCollection", features: []}
 
-function Map() {
+export function Map() {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapRef = useRef<mapSdk.Map | null>(null);
     const mapSourcesRef = useRef<Array<string>>([]);
@@ -83,5 +83,3 @@ function Map() {
         </Box>
     )
 }
-
-export default Map;

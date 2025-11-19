@@ -1,12 +1,10 @@
 import "./app.css";
-import Map from "../Map/map.tsx";
+import {Map} from "../Map";
 
-function App() {
+export function App() {
   return (
     <div className="App">
         <Map/>
     </div>
   )
 }
-
-export default App;
