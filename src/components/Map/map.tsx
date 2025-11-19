@@ -3,6 +3,8 @@ import * as mapSdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./map.css";
 import cfg from '../../assets/ts/config.ts';
+import {Box} from "@mui/material";
+import Navbar from "../Navbar/navbar.tsx";
 
 function Map() {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -12,20 +14,22 @@ function Map() {
     mapSdk.config.apiKey = cfg.MAPTILER_API_KEY;
 
     useEffect(() => {
-        if (mapContainerRef.current) {
-            mapRef.current = new mapSdk.Map({
-                container: mapContainerRef.current,
-                style: mapSdk.MapStyle.STREETS,
-                center: [city.lng, city.lat],
-                zoom: zoom
-            })
-        }
+        if (!mapContainerRef.current) return;
+        mapRef.current = new mapSdk.Map({
+            container: mapContainerRef.current,
+            style: mapSdk.MapStyle.STREETS,
+            center: [city.lng, city.lat],
+            zoom: zoom
+        })
     }, [city.lng, city.lat]);
 
     return (
-        <div className="map-wrap">
-            <div ref={mapContainerRef} className={"map"}/>
-        </div>
+        <Box sx={{display: "flex"}}>
+            <Navbar/>
+            <div className={"container"}>
+                <div ref={mapContainerRef} id={"map"} className={"map"}/>
+            </div>
+        </Box>
     )
 }
 
