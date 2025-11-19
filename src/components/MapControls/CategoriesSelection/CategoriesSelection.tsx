@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {getCategoriesWithProperties} from "../../services/categories.ts";
-import type {Category, Property} from "../../@types";
+import {getCategoriesWithProperties} from "../../../services/categories.ts";
+import type {Category, Property} from "../../../@types";
 import {Autocomplete, TextField} from "@mui/material";
 
 interface Props {

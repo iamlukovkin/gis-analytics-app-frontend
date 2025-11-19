@@ -3,13 +3,13 @@ import * as mapSdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./map.css";
 import cfg from '../../assets/ts/config.ts';
-import {Autocomplete, Box, TextField} from "@mui/material";
-import type {Property, Category} from "../../@types";
-import {CategorySelector} from "../CategoriesSelection";
+import {Box} from "@mui/material";
+import type {Property, Category, ColorRampKey} from "../../@types";
 import type {FeatureCollection} from "geojson";
 import {getCurrentPropertyPoints} from "../../services";
 import {setNewSource, generateGrid} from "../../services/";
 import type {GeoJSONSource} from "@maptiler/sdk";
+import {MapControls} from "../MapControls";
 
 const emptyMapData: FeatureCollection = {type: "FeatureCollection", features: []}
 
@@ -123,20 +123,12 @@ export function Map() {
 
     return (
         <Box sx={{display: "flex"}}>
-            <Box sx={{p: 2, display: "flex", flexDirection: "column", width: "240px", gap: 2}}>
-                <CategorySelector onSelectCategory={onSelectCategory}/>
-                <Autocomplete
-                    options={Object.keys(mapSdk.ColorRampCollection)}
-                    getOptionLabel={(option) => option}
-                    value={selectedColorRamp}
-                    onChange={(_, value) => {
-                        if (value) changeColorOfHeatMap(value)
-                    }}
-                    renderInput={(params) => (
-                        <TextField {...params} label={"Colors"} variant="outlined" size="small"/>
-                    )}
-                />
-            </Box>
+            <MapControls
+                selectedColorRamp={selectedColorRamp}
+                onSelectCategory={onSelectCategory}
+                onSelectColorRamp={(color) => changeColorOfHeatMap(color)}
+                colorOptions={Object.keys(mapSdk.ColorRampCollection) as ColorRampKey[]}
+            />
             <div className={"container"}>
                 <div ref={mapContainerRef} id={"map"} className={"map"}/>
             </div>
