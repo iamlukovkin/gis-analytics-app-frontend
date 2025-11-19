@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {getCategoriesWithProperties} from "../../services/categories.ts";
 import type {Category, Property} from "../../@types";
-import {Autocomplete, Box, TextField} from "@mui/material";
+import {Autocomplete, TextField} from "@mui/material";
 
 interface Props {
     onSelectCategory: (category: Category | null, property: Property | null) => void;
@@ -54,7 +54,7 @@ export const CategorySelector: React.FC<Props> = ({onSelectCategory: onSelectCat
     }, [handleChangeProperty, selectedCategory, selectedProperty]);
 
     return (
-        <Box sx={{p: 2, display: "flex", flexDirection: "column", width: "240px", gap: 2}}>
+        <>
             <Autocomplete
                 options={categories}
                 getOptionLabel={(option) => option.fullName}
@@ -73,6 +73,6 @@ export const CategorySelector: React.FC<Props> = ({onSelectCategory: onSelectCat
                     <TextField {...params} label={"Property"} variant="outlined" size="small"/>
                 )}
             />
-        </Box>
+        </>
     );
 }
