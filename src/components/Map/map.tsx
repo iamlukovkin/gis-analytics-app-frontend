@@ -8,7 +8,8 @@ import type {Property, Category} from "../../@types";
 import {CategorySelector} from "../CategoriesSelection";
 import type {FeatureCollection} from "geojson";
 import {getCurrentPropertyPoints} from "../../services";
-import {setNewSource} from "../../services/";
+import {setNewSource, generateGrid} from "../../services/";
+import type {GeoJSONSource} from "@maptiler/sdk";
 
 const emptyMapData: FeatureCollection = {type: "FeatureCollection", features: []}
 
@@ -33,7 +34,7 @@ export function Map() {
             mapRef.current = new mapSdk.Map({
                 container: mapContainerRef.current,
                 style: cfg.MAP_STYLE,
-                center: [cfg.INIT_CITY.lng, cfg.INIT_CITY.lat],
+                center: [cfg.INIT_CITY.lon, cfg.INIT_CITY.lat],
                 zoom: cfg.MAP_ZOOM
             });
             setMapReady(true);
@@ -48,8 +49,28 @@ export function Map() {
                 colorRamp: mapSdk.ColorRampCollection[selectedColorRamp].scale(0, 30),
                 opacity: 0.8,
             });
-            mapSourcesRef.current = [{src:srcId, layer: layerId}];
-        })
+            mapSourcesRef.current = [{src: srcId, layer: layerId}];
+        });
+        generateGrid(8, cfg.INIT_CITY, 6).then(grid => {
+            if (!grid) return;
+            const map = mapRef.current as mapSdk.Map;
+            if (!map) return;
+            const sourceName: string = "h3-grid";
+            if (!map.getSource(sourceName)) {
+                map.addSource(sourceName, {type: "geojson", data: grid})
+                map.addLayer({
+                    id: sourceName + "-layer",
+                    type: "line",
+                    source: sourceName,
+                    paint: {
+                        "line-color": "#FFFFFF",
+                        "line-width": 1,
+                    }
+                });
+            } else {
+                (map.getSource(sourceName) as GeoJSONSource).setData(grid);
+            }
+        });
     }, [mapReady, selectedColorRamp]);
 
     const onSelectCategory = (category: Category | null, property: Property | null) => {
@@ -58,7 +79,7 @@ export function Map() {
     }
 
     const changeMapData = useCallback((data: FeatureCollection) => {
-        setNewSource(mapSourcesRef.current.map(source=>source.src), mapRef, data);
+        setNewSource(mapSourcesRef.current.map(source => source.src), mapRef, data);
     }, []);
 
     const changeColorOfHeatMap = (color: keyof typeof mapSdk.ColorRampCollection | null | string) => {
@@ -71,12 +92,12 @@ export function Map() {
             if (map.getLayer(layer)) map.removeLayer(layer);
             if (map.getSource(src)) map.removeSource(src);
         })
-        const { heatmapLayerId: layerId, heatmapSourceId: srcId } = mapSdk.helpers.addHeatmap(map, {
+        const {heatmapLayerId: layerId, heatmapSourceId: srcId} = mapSdk.helpers.addHeatmap(map, {
             data: mapData,
             colorRamp: mapSdk.ColorRampCollection[colorRamp].scale(0, 30),
             opacity: 0.8,
         });
-        mapSourcesRef.current = [{ src: srcId, layer: layerId }];
+        mapSourcesRef.current = [{src: srcId, layer: layerId}];
     }
 
     useEffect(() => {
@@ -91,7 +112,7 @@ export function Map() {
             if (selectedCategory && selectedProperty) {
                 const categoryName = selectedCategory.fullName;
                 const propertyName = selectedProperty.fullName;
-                getCurrentPropertyPoints(categoryName, propertyName, cfg.INIT_CITY.lat, cfg.INIT_CITY.lng)
+                getCurrentPropertyPoints(categoryName, propertyName, cfg.INIT_CITY.lat, cfg.INIT_CITY.lon)
                     .then(response => {
                         setMapData(response || emptyMapData);
                     })

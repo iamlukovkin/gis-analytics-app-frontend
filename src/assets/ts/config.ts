@@ -7,7 +7,7 @@ export type AppConfig = {
     BACKEND_URL: string,
     MAP_ZOOM: number,
     INIT_CITY: {
-        lng: number,
+        lon: number,
         lat: number
     },
     HEATMAP_COLOR: keyof typeof mapSdk.ColorRampCollection
@@ -19,7 +19,7 @@ const config: AppConfig = {
     BACKEND_URL: import.meta.env.VITE_BACKEND_URL as string,
     MAP_ZOOM: 12,
     INIT_CITY : {
-        lng: 39.741253,
+        lon: 39.741253,
         lat: 54.629393
     },
     HEATMAP_COLOR: "COOL"
