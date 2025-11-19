@@ -1,43 +1,17 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {getCategoriesWithProperties} from "../../services/categories.ts";
 import type {Category, Property} from "../../@types";
 import {Autocomplete, Box, TextField} from "@mui/material";
 
 interface Props {
-    onLayerChange: (layer: Category) => void;
-    onFeatureChange: (feature: Property) => void;
+    onSelectCategory: (category: Category | null, property: Property | null) => void;
 }
 
-export const CategorySelector: React.FC<Props> = ({
-                                                      onLayerChange: onCategoryChange,
-                                                      onFeatureChange: onPropertyChange
-                                                  }) => {
+export const CategorySelector: React.FC<Props> = ({onSelectCategory: onSelectCategory}) => {
     const [categories, setCategories] = useState<Category[]>([]);
+    const [properties, setProperties] = useState<Property[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-
-    const handleCategoriesChange = (categoryId: number | null) => {
-        const category = categories.find(c => c.id === categoryId);
-        setSelectedCategory(category || null);
-        setSelectedProperty(category || null);
-        if (!category) return;
-        onCategoryChange(category);
-        if (category.properties.length > 0) {
-            const property = category.properties[0];
-            setSelectedProperty(property);
-            onPropertyChange(property);
-        } else {
-            setSelectedProperty(null);
-        }
-    };
-
-    const handlePropertyChange = (propertyId: number | null) => {
-        if (!selectedCategory) return;
-        const property = selectedCategory.properties.find(p => p.id === propertyId);
-        setSelectedProperty(property || null);
-        if (!property) return;
-        onPropertyChange(property);
-    };
 
     useEffect(() => {
         getCategoriesWithProperties().then(data => {
@@ -45,13 +19,39 @@ export const CategorySelector: React.FC<Props> = ({
             if (data.length === 0) return;
             const firstCategory = data[0];
             setSelectedCategory(firstCategory);
-            onCategoryChange(firstCategory);
+            setProperties(firstCategory.properties)
             if (firstCategory.properties.length === 0) return;
             const firstProperty = firstCategory.properties[0];
             setSelectedProperty(firstProperty);
-            onPropertyChange(firstProperty);
         })
-    }, [onCategoryChange, onPropertyChange]);
+    }, []);
+
+    useEffect(() => {
+        if (selectedCategory == null) {
+            queueMicrotask(() => {
+                setProperties([]);
+                setSelectedProperty(null);
+            });
+            return;
+        }
+        queueMicrotask(() => {
+            const properties = selectedCategory.properties;
+            setProperties(properties);
+            if (properties.length === 0) return;
+            setSelectedProperty(properties[0]);
+        })
+    }, [selectedCategory]);
+
+    const handleChangeProperty = useCallback((
+        category: Category | null,
+        property: Property | null
+    ) => {
+        onSelectCategory(category, property);
+    }, [onSelectCategory]);
+
+    useEffect(() => {
+        handleChangeProperty(selectedCategory, selectedProperty);
+    }, [handleChangeProperty, selectedCategory, selectedProperty]);
 
     return (
         <Box sx={{p: 2, display: "flex", flexDirection: "column", width: "240px", gap: 2}}>
@@ -59,20 +59,20 @@ export const CategorySelector: React.FC<Props> = ({
                 options={categories}
                 getOptionLabel={(option) => option.fullName}
                 value={selectedCategory}
-                onChange={(_, value) => handleCategoriesChange(value ? value.id : null)}
+                onChange={(_, value) => setSelectedCategory(value)}
                 renderInput={(params) => (
                     <TextField {...params} label={"Category"} variant="outlined" size="small"/>
                 )}
             />
-            {selectedCategory && (<Autocomplete
-                options={selectedCategory.properties}
+            <Autocomplete
+                options={properties}
                 getOptionLabel={(option) => option.fullName}
                 value={selectedProperty}
-                onChange={(_, value) => handlePropertyChange(value ? value.id : null)}
+                onChange={(_, value) => setSelectedProperty(value)}
                 renderInput={(params) => (
                     <TextField {...params} label={"Property"} variant="outlined" size="small"/>
                 )}
-            />)}
+            />
         </Box>
     );
 }

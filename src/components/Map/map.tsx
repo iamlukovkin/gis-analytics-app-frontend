@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import * as mapSdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./map.css";
@@ -6,55 +6,77 @@ import cfg from '../../assets/ts/config.ts';
 import {Box} from "@mui/material";
 import type {Property, Category} from "../../@types";
 import {CategorySelector} from "../CategoriesSelection";
-// import type {FeatureCollection} from "geojson";
-// import {getCurrentPropertyPoints} from "../../services";
+import type {FeatureCollection} from "geojson";
+import {getCurrentPropertyPoints} from "../../services";
+import {setNewSource} from "../../services/";
 
-// const fetchData = async (
-//     category: string,
-//     property: string
-// ): Promise<FeatureCollection | undefined> => {
-//     try {
-//         return await getCurrentPropertyPoints(category, property, city.lat, city.lng);
-//     } catch (err) {
-//         console.error(err);
-//     }
-// };
-
-const city = {lng: 39.741253, lat: 54.629393};
+const emptyMapData: FeatureCollection = {type: "FeatureCollection", features: []}
 
 function Map() {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapRef = useRef<mapSdk.Map | null>(null);
+    const mapSourcesRef = useRef<Array<string>>([]);
     const [mapReady, setMapReady] = useState<boolean>(false);
-    const zoom = 12;
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-    mapSdk.config.apiKey = cfg.MAPTILER_API_KEY;
 
     useEffect(() => {
-        if (!mapContainerRef.current) return;
-        mapRef.current = new mapSdk.Map({
-            container: mapContainerRef.current,
-            style: cfg.MAP_STYLE,
-            center: [city.lng, city.lat],
-            zoom: zoom
-        });
-        setMapReady(true);
+        mapSdk.config.apiKey = cfg.MAPTILER_API_KEY;
     }, []);
 
     useEffect(() => {
+        queueMicrotask(() => {
+            if (!mapContainerRef.current) return;
+            mapRef.current = new mapSdk.Map({
+                container: mapContainerRef.current,
+                style: cfg.MAP_STYLE,
+                center: [cfg.INIT_CITY.lng, cfg.INIT_CITY.lat],
+                zoom: cfg.MAP_ZOOM
+            });
+            setMapReady(true);
+        })
+    }, []);
+
+    useEffect(() => {
+        if (!mapReady) return;
         mapRef.current?.on("load", () => {
-            mapSdk.helpers.addPoint(mapRef.current!, {data: {type: "FeatureCollection", features: []}});
+            const {heatmapSourceId: srcId} = mapSdk.helpers.addHeatmap(
+                mapRef.current!,
+                {data: emptyMapData}
+            );
+            mapSourcesRef.current = [srcId];
         })
     }, [mapReady]);
 
+    const onSelectCategory = (category: Category | null, property: Property | null) => {
+        setSelectedCategory(category);
+        setSelectedProperty(property);
+    }
+
+    const changeMapData = useCallback((data: FeatureCollection) => {
+        setNewSource(mapSourcesRef.current, mapRef, data);
+    }, []);
+
     useEffect(() => {
-        console.log(selectedCategory, selectedProperty);
-    }, [selectedCategory, selectedProperty]);
+        if (!mapReady) return;
+        changeMapData(emptyMapData);
+        if (selectedCategory && selectedProperty) {
+            getCurrentPropertyPoints(
+                selectedCategory.fullName,
+                selectedProperty.fullName,
+                cfg.INIT_CITY.lat,
+                cfg.INIT_CITY.lng
+            )
+                .then(response => {
+                    changeMapData(response || emptyMapData);
+                })
+                .catch(console.error);
+        }
+    }, [changeMapData, mapReady, selectedCategory, selectedProperty]);
 
     return (
         <Box sx={{display: "flex"}}>
-            <CategorySelector onLayerChange={setSelectedCategory} onFeatureChange={setSelectedProperty}/>
+            <CategorySelector onSelectCategory={onSelectCategory}/>
             <div className={"container"}>
                 <div ref={mapContainerRef} id={"map"} className={"map"}/>
             </div>
