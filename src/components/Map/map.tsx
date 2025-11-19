@@ -4,20 +4,21 @@ import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./map.css";
 import cfg from '../../assets/ts/config.ts';
 import {Box} from "@mui/material";
-import Navbar from "../Navbar/navbar.tsx";
-import type {FeatureCollection} from "geojson";
-import {getCurrentPropertyPoints} from "../../services";
+import type {Property, Category} from "../../@types";
+import {CategorySelector} from "../CategoriesSelection";
+// import type {FeatureCollection} from "geojson";
+// import {getCurrentPropertyPoints} from "../../services";
 
-const fetchData = async (
-    category: string,
-    property: string
-): Promise<FeatureCollection | undefined> => {
-    try {
-        return await getCurrentPropertyPoints(category, property, city.lat, city.lng);
-    } catch (err) {
-        console.error(err);
-    }
-};
+// const fetchData = async (
+//     category: string,
+//     property: string
+// ): Promise<FeatureCollection | undefined> => {
+//     try {
+//         return await getCurrentPropertyPoints(category, property, city.lat, city.lng);
+//     } catch (err) {
+//         console.error(err);
+//     }
+// };
 
 const city = {lng: 39.741253, lat: 54.629393};
 
@@ -25,9 +26,9 @@ function Map() {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapRef = useRef<mapSdk.Map | null>(null);
     const [mapReady, setMapReady] = useState<boolean>(false);
-    const category: string = "amenity";
-    const property: string = "cafe";
     const zoom = 12;
+    const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+    const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     mapSdk.config.apiKey = cfg.MAPTILER_API_KEY;
 
     useEffect(() => {
@@ -43,20 +44,17 @@ function Map() {
 
     useEffect(() => {
         mapRef.current?.on("load", () => {
-            fetchData(category, property).then(response => {
-                if (response) {
-                    console.log(response);
-                    mapSdk.helpers.addPoint(mapRef.current!, {data: response});
-                } else {
-                    console.error(response); // LATER: handle error loading data
-                }
-            });
+            mapSdk.helpers.addPoint(mapRef.current!, {data: {type: "FeatureCollection", features: []}});
         })
     }, [mapReady]);
 
+    useEffect(() => {
+        console.log(selectedCategory, selectedProperty);
+    }, [selectedCategory, selectedProperty]);
+
     return (
         <Box sx={{display: "flex"}}>
-            <Navbar/>
+            <CategorySelector onLayerChange={setSelectedCategory} onFeatureChange={setSelectedProperty}/>
             <div className={"container"}>
                 <div ref={mapContainerRef} id={"map"} className={"map"}/>
             </div>
