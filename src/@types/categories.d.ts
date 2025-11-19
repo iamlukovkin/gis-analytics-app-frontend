@@ -6,5 +6,7 @@ export interface Property {
 export interface Category {
     id: number;
     fullName: string;
+    sourceName: string;
+    sourceArgument: string;
     properties: Property[];
 }

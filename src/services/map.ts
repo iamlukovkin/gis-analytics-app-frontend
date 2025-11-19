@@ -3,6 +3,7 @@ import {GeoJSONSource, type Map} from "@maptiler/sdk";
 import type {RefObject} from "react";
 import cfg from "../assets/ts/config.ts";
 import * as h3 from "h3-js";
+import type {Region} from "../@types";
 
 export function setNewSource(
     mapSources: Array<string>,
@@ -16,18 +17,20 @@ export function setNewSource(
     }
 }
 
-export async function generateGrid(
-    resolution: number = 7,
-    coords: {lat: number, lon: number},
-    scale: number
-): Promise<FeatureCollection | null> {
-
-    let url = `${cfg.BACKEND_URL}/osm/regions/of-user`;
-    url += `?lat=${coords.lat}&lon=${coords.lon}&scale=${scale}`;
+export async function getUserRegions(coords: {lat: number, lon: number}): Promise<Region[]> {
+    const url = `${cfg.BACKEND_URL}/osm/regions?lat=${coords.lat}&lon=${coords.lon}`;
     const response = await fetch(url);
-    if (!response.ok) throw new Error("Could not fetch map response");
-    const regionGeoJson: FeatureCollection = await response.json();
-    const polygon: Polygon = regionGeoJson.features[0].geometry as Polygon;
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
+export async function generateGrid(
+    region: FeatureCollection,
+    resolution: number = 7
+): Promise<FeatureCollection | null> {
+    const polygon: Polygon = region.features[0].geometry as Polygon;
     const hexagons = h3.polygonToCells(polygon.coordinates, resolution, true);
     const features: Feature<Polygon>[] = hexagons.map(hex => {
         const hexBoundary = h3.cellToBoundary(hex, true);

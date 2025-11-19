@@ -1,34 +1,35 @@
-import React from "react";
-import {Autocomplete, Box, TextField} from "@mui/material";
-import type {Category, Property} from "../../@types";
-import {CategorySelector} from "./CategoriesSelection";
-import type {ColorRampKey} from "../../@types";
+import { Paper } from "@mui/material";
+import React, {type ReactNode } from "react";
 
-type MapControlsProps = {
-    selectedColorRamp: ColorRampKey;
-    onSelectCategory: (category: Category | null, property: Property | null) => void;
-    onSelectColorRamp: (color: ColorRampKey | null) => void;
-    colorOptions: ColorRampKey[];
-};
+type MapControlsProps = { children?: ReactNode; };
 
-export const MapControls: React.FC<MapControlsProps> = ({
-    selectedColorRamp,
-    onSelectCategory,
-    onSelectColorRamp,
-    colorOptions
-}) => {
+export const MapControls: React.FC<MapControlsProps> = ({ children }) => {
     return (
-        <Box sx={{p: 2, display: "flex", flexDirection: "column", width: "240px", gap: 2}}>
-            <CategorySelector onSelectCategory={onSelectCategory}/>
-            <Autocomplete
-                options={colorOptions}
-                getOptionLabel={(option) => option}
-                value={selectedColorRamp}
-                onChange={(_, value) => onSelectColorRamp(value)}
-                renderInput={(params) => (
-                    <TextField {...params} label={"Colors"} variant="outlined" size="small"/>
-                )}
-            />
-        </Box>
+        <Paper
+            elevation={0}
+            sx={{
+                position: "absolute",
+                top: 16,
+                left: 16,
+                zIndex: 20,
+                p: 2,
+                width: 240,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1.5,
+                borderRadius: 3,
+                background: "rgba(255, 255, 255, 0.15)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                backdropFilter: "blur(14px) saturate(180%)",
+                boxShadow: "0 6px 24px rgba(0,0,0,0.2)",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                    background: "rgba(255, 255, 255, 0.2)",
+                    boxShadow: "0 10px 36px rgba(0,0,0,0.25)",
+                },
+            }}
+        >
+            {children}
+        </Paper>
     );
 };
