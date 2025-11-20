@@ -1,27 +1,38 @@
-import React from "react";
-import {Autocomplete, TextField} from "@mui/material";
-import type {Region} from "../../../@types";
-import {autocompleteGlassStyles} from "../../../services/sharedStyles.ts";
-import {MapControlHeader} from "../../util";
+import React, { useState, useEffect } from "react";
+import type { Region } from "../../../@types";
 
 export const UserRegionControl: React.FC<{
-    selectedRegion: Region | null,
     regions: Region[],
     setRegion: (region: Region | null) => void,
-}> = ({selectedRegion, regions, setRegion}) => {
+}> = ({ regions, setRegion }) => {
+    const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
+
+    useEffect(() => {
+        queueMicrotask(() => {
+            if (!regions.length) return;
+            setSelectedRegion(regions[0]);
+            setRegion(regions[0]);
+        })
+    }, [regions, setRegion]);
+
+    const onSelectRegion = (selectedValue: string) => {
+        const region = regions.find(r => r.adminLevel === Number(selectedValue));
+        if (!region) return;
+        setSelectedRegion(region);
+        setRegion(region);
+    };
+
     return (
-        <>
-            <MapControlHeader title={"Region"}/>
-            <Autocomplete
-                options={regions}
-                getOptionLabel={(option) => option.name}
-                value={selectedRegion}
-                onChange={(_, value) => setRegion(value)}
-                sx={autocompleteGlassStyles}
-                renderInput={(params) => (
-                    <TextField {...params} label="" variant="outlined" size="small"/>
-                )}
-            />
-        </>
+        <div>
+            <h3>Region</h3>
+            <select value={selectedRegion ? selectedRegion.adminLevel : ""}
+                    onChange={(e) => onSelectRegion(e.target.value)}>
+                {regions.map(region => (
+                    <option key={region.adminLevel} value={region.adminLevel}>
+                        {region.name}
+                    </option>
+                ))}
+            </select>
+        </div>
     );
-}
+};

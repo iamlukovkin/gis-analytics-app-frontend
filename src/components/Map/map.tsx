@@ -4,7 +4,6 @@ import * as mapSdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./map.css";
 import config from '../../services/config.ts';
-import {Box, Divider, Typography} from "@mui/material";
 import type {Category, ColorRampKey, FeatureProperties, Property, Region} from "../../@types";
 import type {FeatureCollection} from "geojson";
 import {generateGrid, getCurrentPropertyPoints, getUserRegions, setNewSource} from "../../services";
@@ -99,7 +98,6 @@ export function Map() {
 
     const changeMapData = useCallback((data: FeatureCollection) => {
         setNewSource(mapSourcesRef.current.map(source => source.src), mapRef, data);
-        console.log(data);
     }, []);
 
     const changeColorOfHeatMap = (
@@ -122,9 +120,9 @@ export function Map() {
         mapSourcesRef.current = [{src: srcId, layer: layerId}];
     }
 
-    const changeRegion = (region: Region | null) => {
+    const changeRegion = useCallback((region: Region | null) => {
         setRegion(region);
-    }
+    }, [])
 
     useEffect(() => {
         setVisibleData(mapData)
@@ -162,29 +160,28 @@ export function Map() {
     }, [changeMapData, mapReady, selectedCategory]);
 
     return (
-        <Box sx={{display: "flex"}}>
+        <div style={{display: 'flex', flexDirection: 'row'}}>
             <MapControls>
-                <Typography
-                    variant="subtitle1"
-                    sx={{fontWeight: 600, mb: 1, color: "#fff", textShadow: "0 1px 2px rgba(0,0,0,0.3)"}}>
-                    Map Controls
-                </Typography>
-                <CategoriesControl
-                    onSelectCategory={onSelectCategory}
-                    onSelectProperties={onSelectProperties}/>
-                <Divider sx={{my: 1, borderColor: "rgba(255,255,255,0.2)"}}/>
-                <HeatmapColorControl
-                    selectedColorRamp={selectedColorRamp}
-                    colorOptions={Object.keys(mapSdk.ColorRampCollection) as ColorRampKey[]}
-                    onSelectColorRamp={(color) => changeColorOfHeatMap(color)}/>
-                <Box>
+                <h1>Map Controls</h1>
+                <div>
+                    <h2>Categories</h2>
+                    <CategoriesControl
+                        onSelectCategory={onSelectCategory}
+                        onSelectProperties={onSelectProperties}/>
+                    <HeatmapColorControl
+                        selectedColorRamp={selectedColorRamp}
+                        colorOptions={Object.keys(mapSdk.ColorRampCollection) as ColorRampKey[]}
+                        onSelectColorRamp={(color) => changeColorOfHeatMap(color)}/>
+                </div>
+                <div>
+                    <h2>Map preferences</h2>
                     <GridResolutionControl gridResolution={gridResolution} setGridResolution={setGridResolution}/>
-                    <UserRegionControl selectedRegion={region} regions={allUserRegions} setRegion={changeRegion}/>
-                </Box>
+                    <UserRegionControl regions={allUserRegions} setRegion={changeRegion}/>
+                </div>
             </MapControls>
             <div className={"container"}>
                 <div ref={mapContainerRef} id={"map"} className={"map"}/>
             </div>
-        </Box>
+        </div>
     )
 }
