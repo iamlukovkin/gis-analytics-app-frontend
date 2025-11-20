@@ -7,7 +7,7 @@ interface Props {
     onSelectProperties: (properties: Property[]) => void;
 }
 
-export const CategorySelector: React.FC<Props> = ({ onSelectCategory, onSelectProperties }) => {
+export const CategoriesControl: React.FC<Props> = ({ onSelectCategory, onSelectProperties }) => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [properties, setProperties] = useState<Property[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);

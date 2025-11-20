@@ -9,8 +9,7 @@ import type {Category, ColorRampKey, FeatureProperties, Property, Region} from "
 import type {FeatureCollection} from "geojson";
 import {generateGrid, getCurrentPropertyPoints, getUserRegions, setNewSource} from "../../services";
 import {MapControls} from "../MapControls";
-import {GridResolutionControl, HeatmapColorControl, UserRegionControl} from "../MapControls/control"
-import {CategorySelector} from "../MapControls/CategoriesSelection";
+import {CategoriesControl, GridResolutionControl, HeatmapColorControl, UserRegionControl} from "../MapControls/control"
 
 const emptyMapData: FeatureCollection = {type: "FeatureCollection", features: []}
 
@@ -170,7 +169,7 @@ export function Map() {
                     sx={{fontWeight: 600, mb: 1, color: "#fff", textShadow: "0 1px 2px rgba(0,0,0,0.3)"}}>
                     Map Controls
                 </Typography>
-                <CategorySelector
+                <CategoriesControl
                     onSelectCategory={onSelectCategory}
                     onSelectProperties={onSelectProperties}/>
                 <Divider sx={{my: 1, borderColor: "rgba(255,255,255,0.2)"}}/>
