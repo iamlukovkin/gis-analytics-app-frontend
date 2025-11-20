@@ -1,27 +1,26 @@
-import React, {useCallback, useEffect, useState} from "react";
-import {getCategoriesWithProperties} from "../../../services/categories.ts";
-import type {Category, Property} from "../../../@types";
-import {Autocomplete, TextField, Box, Typography} from "@mui/material";
-import {autocompleteGlassStyles} from "../../../services/sharedStyles";
+import React, { useEffect, useState } from "react";
+import { getCategoriesWithProperties } from "../../../services/categories.ts";
+import type { Category, Property } from "../../../@types";
 
 interface Props {
-    onSelectCategory: (category: Category | null, property: Property | null) => void;
+    onSelectCategory: (category: Category | null) => void;
+    onSelectProperties: (properties: Property[]) => void;
 }
 
-export const CategorySelector: React.FC<Props> = ({onSelectCategory}) => {
+export const CategorySelector: React.FC<Props> = ({ onSelectCategory, onSelectProperties }) => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [properties, setProperties] = useState<Property[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-    const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+    const [selectedProperties, setSelectedProperties] = useState<Property[]>([]);
 
     useEffect(() => {
-        getCategoriesWithProperties().then(data => {
+        getCategoriesWithProperties().then((data) => {
             setCategories(data);
             if (!data.length) return;
             const firstCategory = data[0];
             setSelectedCategory(firstCategory);
             setProperties(firstCategory.properties);
-            if (firstCategory.properties.length) setSelectedProperty(firstCategory.properties[0]);
+            setSelectedProperties(firstCategory.properties);
         });
     }, []);
 
@@ -29,62 +28,82 @@ export const CategorySelector: React.FC<Props> = ({onSelectCategory}) => {
         queueMicrotask(() => {
             if (!selectedCategory) {
                 setProperties([]);
-                setSelectedProperty(null);
+                setSelectedProperties([]);
                 return;
             }
-            const props = selectedCategory.properties;
-            setProperties(props);
-            if (props.length) setSelectedProperty(props[0]);
-        });
+            setProperties(selectedCategory.properties);
+            setSelectedProperties(selectedCategory.properties);
+        })
     }, [selectedCategory]);
 
-    const handleChangeProperty = useCallback((category: Category | null, property: Property | null) => {
-        onSelectCategory(category, property);
-    }, [onSelectCategory]);
+    useEffect(() => {
+        onSelectCategory(selectedCategory);
+    }, [selectedCategory, onSelectCategory]);
 
     useEffect(() => {
-        handleChangeProperty(selectedCategory, selectedProperty);
-    }, [handleChangeProperty, selectedCategory, selectedProperty]);
+        onSelectProperties(selectedProperties);
+    }, [selectedProperties, onSelectProperties]);
 
+    const toggleProperty = (prop: Property) => {
+        setSelectedProperties((prev) =>
+            prev.includes(prop)
+                ? prev.filter((p) => p !== prop)
+                : [...prev, prop]
+        );
+    };
+
+    const selectAll = () => setSelectedProperties([...properties]);
+    const clearAll = () => setSelectedProperties([]);
 
     return (
-        <Box sx={{display: "flex", flexDirection: "column", gap: 1.5}}>
-            <Typography sx={{
-                fontWeight: 700,
-                color: "#fff",
-                fontSize: "0.85rem",
-                textShadow: "0 1px 2px rgba(0,0,0,0.4)"
-            }}>
-                Category
-            </Typography>
-            <Autocomplete
-                options={categories}
-                getOptionLabel={(option) => option.fullName}
-                value={selectedCategory}
-                onChange={(_, value) => setSelectedCategory(value)}
-                sx={autocompleteGlassStyles}
-                renderInput={(params) => (
-                    <TextField {...params} label="" variant="outlined" size="small" />
-                )}
-            />
-            <Typography sx={{
-                fontWeight: 700,
-                color: "#fff",
-                fontSize: "0.85rem",
-                textShadow: "0 1px 2px rgba(0,0,0,0.4)"
-            }}>
-                Property
-            </Typography>
-            <Autocomplete
-                options={properties}
-                getOptionLabel={(option) => option.fullName}
-                value={selectedProperty}
-                onChange={(_, value) => setSelectedProperty(value)}
-                sx={autocompleteGlassStyles}
-                renderInput={(params) => (
-                    <TextField {...params} label="" variant="outlined" size="small" />
-                )}
-            />
-        </Box>
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+            width: "240px",
+            padding: "12px",
+            background: "rgba(255,255,255,0.15)",
+            borderRadius: "8px",
+            color: "#fff",
+            fontFamily: "sans-serif"
+        }}>
+            {/* Category Selector */}
+            <div>
+                <label style={{ fontWeight: 700 }}>Category</label>
+                <select
+                    value={selectedCategory?.id || ""}
+                    onChange={(e) => {
+                        const cat = categories.find(c => c.id === Number(e.target.value)) || null;
+                        setSelectedCategory(cat);
+                    }}
+                >
+                    {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>{cat.ruName}</option>
+                    ))}
+                </select>
+            </div>
+
+            {/* Properties Selector */}
+            <div>
+                <label style={{ fontWeight: 700 }}>Properties</label>
+
+                <div>
+                    <button type="button" onClick={selectAll} style={{ flex: 1 }}>Выбрать все</button>
+                    <button type="button" onClick={clearAll} style={{ flex: 1 }}>Очистить</button>
+                </div>
+                <div style={{maxHeight: "200px", overflowY: "auto",}}>
+                    {properties.map((prop) => (
+                        <label key={prop.id} style={{ display: "block", marginBottom: "4px", cursor: "pointer" }}>
+                            <input
+                                type="checkbox"
+                                checked={selectedProperties.includes(prop)}
+                                onChange={() => toggleProperty(prop)}
+                            />
+                            {prop.fullName}
+                        </label>
+                    ))}
+                </div>
+            </div>
+        </div>
     );
 };

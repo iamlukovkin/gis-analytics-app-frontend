@@ -8,5 +8,6 @@ export interface Category {
     fullName: string;
     sourceName: string;
     sourceArgument: string;
+    ruName: string;
     properties: Property[];
 }

@@ -1,6 +1,7 @@
 export const autocompleteGlassStyles = {
     "& .MuiOutlinedInput-root": {
         borderRadius: 4,
+        m: 0,
         background: "linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.08))",
         backdropFilter: "blur(16px) saturate(180%)",
         border: "1px solid rgba(255,255,255,0.25)",

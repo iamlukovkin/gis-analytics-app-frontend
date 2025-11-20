@@ -1,7 +1,8 @@
 import React from "react";
-import {Autocomplete, TextField, Typography} from "@mui/material";
+import {Autocomplete, TextField} from "@mui/material";
 import type {ColorRampKey} from "../../../@types";
 import {autocompleteGlassStyles} from "../../../services/sharedStyles.ts";
+import {MapControlHeader} from "../../util";
 
 export const HeatmapColorControl: React.FC<{
     selectedColorRamp: ColorRampKey;
@@ -9,16 +10,7 @@ export const HeatmapColorControl: React.FC<{
     onSelectColorRamp: (color: ColorRampKey | null) => void;
 }> = ({ selectedColorRamp, colorOptions, onSelectColorRamp }) => (
     <>
-        <Typography
-            sx={{
-                fontWeight: 700,
-                color: "#fff",
-                fontSize: "0.85rem",
-                textShadow: "0 1px 2px rgba(0,0,0,0.4)"
-            }}
-        >
-            Heatmap Color
-        </Typography>
+        <MapControlHeader title={"Heatmap color"}/>
         <Autocomplete
             options={colorOptions}
             getOptionLabel={(option) => option}

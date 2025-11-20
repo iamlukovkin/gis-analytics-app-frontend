@@ -1,22 +1,13 @@
 import React from "react";
-import {Box, Button, Typography} from "@mui/material";
+import {Box, Button} from "@mui/material";
+import {MapControlHeader} from "../../util";
 
 export const GridResolutionControl: React.FC<{
     gridResolution: number;
     setGridResolution: (value: number) => void;
 }> = ({ gridResolution, setGridResolution }) => (
     <>
-        <Typography
-            sx={{
-                fontWeight: 700,
-                color: "#fff",
-                fontSize: "0.85rem",
-                textShadow: "0 1px 2px rgba(0,0,0,0.4)"
-            }}
-        >
-            Grid resolution
-        </Typography>
-
+        <MapControlHeader title={"Grid resolution"}/>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Button
                 variant="contained"
@@ -27,11 +18,7 @@ export const GridResolutionControl: React.FC<{
             >
                 -
             </Button>
-
-            <Typography sx={{ color: "#fff", width: 32, textAlign: "center" }}>
-                {gridResolution}
-            </Typography>
-
+            <p>{gridResolution}</p>
             <Button
                 variant="contained"
                 size="small"
