@@ -1,5 +1,5 @@
 import type {Category} from "../@types";
-import cfg from "../assets/ts/config";
+import cfg from "./config.ts";
 
 export const getCategoriesWithProperties = async (): Promise<Category[]> => {
     const resp = await fetch(`${cfg.BACKEND_URL}/osm/categories`);

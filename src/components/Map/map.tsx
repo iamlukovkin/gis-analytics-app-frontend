@@ -3,7 +3,7 @@ import type {GeoJSONSource} from "@maptiler/sdk";
 import * as mapSdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./map.css";
-import cfg from '../../assets/ts/config.ts';
+import config from '../../services/config.ts';
 import {Box, Divider, Typography} from "@mui/material";
 import type {Category, ColorRampKey, FeatureProperties, Property, Region} from "../../@types";
 import type {FeatureCollection} from "geojson";
@@ -25,10 +25,10 @@ export function Map() {
     const [allUserRegions, setAllUserRegions] = useState<Array<Region>>([]);
     const [region, setRegion] = useState<Region | null>(null);
     const [selectedColorRamp, setSelectedColorRamp]
-        = useState<keyof typeof mapSdk.ColorRampCollection>(cfg.HEATMAP_COLOR);
+        = useState<keyof typeof mapSdk.ColorRampCollection>(config.HEATMAP_COLOR);
 
     useEffect(() => {
-        mapSdk.config.apiKey = cfg.MAPTILER_API_KEY;
+        mapSdk.config.apiKey = config.MAPTILER_API_KEY;
     }, []);
 
     useEffect(() => {
@@ -40,12 +40,12 @@ export function Map() {
                 navigationControl: false,
                 scaleControl: false,
                 geolocateControl: false,
-                style: cfg.MAP_STYLE,
-                center: [cfg.INIT_CITY.lon, cfg.INIT_CITY.lat],
-                zoom: cfg.MAP_ZOOM
+                style: config.MAP_STYLE,
+                center: [config.INIT_CITY.lon, config.INIT_CITY.lat],
+                zoom: config.MAP_ZOOM
             });
             setMapReady(true);
-            getUserRegions(cfg.INIT_CITY)
+            getUserRegions(config.INIT_CITY)
                 .then(response => setAllUserRegions(response))
                 .catch(console.error);
         })
@@ -153,7 +153,7 @@ export function Map() {
             if (!selectedCategory) return;
             const categoryName = selectedCategory.sourceArgument;
             const propIds = selectedCategory.properties.map(prop => prop.id);
-            getCurrentPropertyPoints(categoryName, propIds, cfg.INIT_CITY.lat, cfg.INIT_CITY.lon)
+            getCurrentPropertyPoints(categoryName, propIds, config.INIT_CITY.lat, config.INIT_CITY.lon)
                 .then(response => {
                     setMapData(response || emptyMapData);
                 })

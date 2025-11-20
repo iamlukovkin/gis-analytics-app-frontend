@@ -1,7 +1,7 @@
 import type {Feature, FeatureCollection, Polygon} from "geojson";
 import {GeoJSONSource, type Map} from "@maptiler/sdk";
 import type {RefObject} from "react";
-import cfg from "../assets/ts/config.ts";
+import cfg from "./config.ts";
 import * as h3 from "h3-js";
 import type {Region} from "../@types";
 

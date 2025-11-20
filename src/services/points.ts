@@ -1,4 +1,4 @@
-import cfg from '../assets/ts/config.ts';
+import cfg from './config.ts';
 import type {GetPointsResponse} from "../@types";
 
 export const getCurrentPropertyPoints = async (
