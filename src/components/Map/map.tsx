@@ -165,9 +165,7 @@ export function Map() {
                 <h1>Map Controls</h1>
                 <div>
                     <h2>Categories</h2>
-                    <CategoriesControl
-                        onSelectCategory={onSelectCategory}
-                        onSelectProperties={onSelectProperties}/>
+                    <CategoriesControl onSelectCategory={onSelectCategory} onSelectProperties={onSelectProperties}/>
                     <HeatmapColorControl
                         selectedColorRamp={selectedColorRamp}
                         colorOptions={Object.keys(mapSdk.ColorRampCollection) as ColorRampKey[]}

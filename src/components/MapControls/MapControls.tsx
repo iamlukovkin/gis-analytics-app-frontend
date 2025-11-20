@@ -4,7 +4,7 @@ type MapControlsProps = { children?: ReactNode; };
 
 export const MapControls: React.FC<MapControlsProps> = ({ children }) => {
     return (
-        <div style={{maxWidth:240}}>
+        <div style={{maxWidth:240, position:"absolute", zIndex:1}}>
             {children}
         </div>
     );
