@@ -1,0 +1,256 @@
+.subscriptions-page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--navbar-height) 1rem 2rem;
+}
+
+.subscriptions-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.subscriptions-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #eaeaea;
+    margin-bottom: 1rem;
+}
+
+.subscriptions-header p {
+    font-size: 1.125rem;
+    color: #718096;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.plans-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.plan-card {
+    position: relative;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.plan-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.plan-card.popular {
+    border-color: #4299e1;
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.1);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4299e1;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.plan-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.plan-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #ebf8ff;
+    margin-bottom: 1rem;
+}
+
+.plan-icon .icon {
+    width: 32px;
+    height: 32px;
+    color: #4299e1;
+}
+
+.plan-card:nth-child(1) .plan-icon {
+    background: #f0fff4;
+}
+
+.plan-card:nth-child(1) .plan-icon .icon {
+    color: #48bb78;
+}
+
+.plan-card:nth-child(3) .plan-icon {
+    background: #faf5ff;
+}
+
+.plan-card:nth-child(3) .plan-icon .icon {
+    color: #9f7aea;
+}
+
+.plan-header h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 1rem;
+}
+
+.plan-price {
+    margin-bottom: 1rem;
+}
+
+.price {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1a202c;
+}
+
+.period {
+    font-size: 1rem;
+    color: #718096;
+    margin-left: 0.25rem;
+}
+
+.plan-description {
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+.plan-features {
+    margin-bottom: 2rem;
+}
+
+.feature {
+    display: flex;
+    color: #1a202c;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f7fafc;
+}
+
+.feature:last-child {
+    border-bottom: none;
+}
+
+.feature-check {
+    width: 20px;
+    height: 20px;
+    color: #48bb78;
+    flex-shrink: 0;
+}
+
+.feature-cross {
+    width: 20px;
+    height: 20px;
+    color: #e53e3e;
+    flex-shrink: 0;
+}
+
+.feature-disabled {
+    color: #a0aec0;
+    text-decoration: line-through;
+}
+
+.plan-button {
+    width: 100%;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.plan-button.primary {
+    background: #4299e1;
+    color: white;
+}
+
+.plan-button.primary:hover {
+    background: #3182ce;
+}
+
+.plan-button.secondary {
+    background: #9f7aea;
+    color: white;
+}
+
+.plan-button.secondary:hover {
+    background: #805ad5;
+}
+
+.plan-button.outline {
+    background: white;
+    color: #4299e1;
+    border: 2px solid #4299e1;
+}
+
+.plan-button.outline:hover {
+    background: #ebf8ff;
+}
+
+.subscriptions-footer {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 3rem;
+}
+
+.subscriptions-footer h2 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 2rem;
+}
+
+.faq-section {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    margin-bottom: 2rem;
+}
+
+.faq-item h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+}
+
+.faq-item p {
+    color: #718096;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .subscriptions-page {
+        padding: 1rem 0.5rem;
+    }
+
+    .plans-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .subscriptions-header h1 {
+        font-size: 2rem;
+    }
+}

@@ -4,6 +4,7 @@ import type {FeatureCollection} from "geojson";
 export type ColorRampKey = keyof typeof mapSdk.ColorRampCollection;
 
 export type Region = {
+    osmId: number,
     name: string,
     adminLevel: number,
     geoJson: FeatureCollection

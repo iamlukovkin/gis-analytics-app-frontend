@@ -4,6 +4,11 @@ import type {RefObject} from "react";
 import cfg from "./config.ts";
 import * as h3 from "h3-js";
 import type {Region} from "../@types";
+import * as mapSdk from "@maptiler/sdk";
+
+export function getColorRamp(colorRamp: keyof typeof mapSdk.ColorRampCollection) {
+    return mapSdk.ColorRampCollection[colorRamp].scale(1, 10);
+}
 
 export function setNewSource(
     mapSources: Array<string>,

@@ -1,6 +1,7 @@
 export interface Property {
     id: number;
     fullName: string;
+    ruName: string;
 }
 
 export interface Category {

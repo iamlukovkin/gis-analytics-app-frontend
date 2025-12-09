@@ -56,34 +56,28 @@ export const CategoriesControl: React.FC<Props> = ({onSelectCategory, onSelectPr
     const clearAll = () => setSelectedProperties([]);
 
     return (
-        <div>
-            <div>
-                <h3>Category</h3>
-                <select value={selectedCategory?.id || ""}
+        <>
+            <select value={selectedCategory?.id || ""}
                     onChange={(e) => {
                         const cat = categories.find(c => c.id === Number(e.target.value)) || null;
                         setSelectedCategory(cat);
                     }}
-                >
-                    {categories.map((cat) => (<option key={cat.id} value={cat.id}>{cat.ruName}</option>))}
-                </select>
-            </div>
+            >
+                {categories.map((cat) => (<option key={cat.id} value={cat.id}>{cat.ruName}</option>))}
+            </select>
             <div>
-                <h3>Properties</h3>
-                <div>
-                    <button type="button" onClick={selectAll}>Выбрать все</button>
-                    <button type="button" onClick={clearAll}>Очистить</button>
-                </div>
-                <div>
-                    {properties.map((prop) => (
-                        <label key={prop.id}>
-                            <input type="checkbox" checked={selectedProperties.includes(prop)}
-                                onChange={() => toggleProperty(prop)}/>
-                            {prop.fullName}
-                        </label>
-                    ))}
-                </div>
+                <button type="button" onClick={selectAll}>Выбрать все</button>
+                <button type="button" onClick={clearAll}>Очистить</button>
             </div>
-        </div>
+            <div className={'map-properties-list'}>
+                {properties.map((prop) => (
+                    <label key={prop.id}>
+                        <input type="checkbox" checked={selectedProperties.includes(prop)}
+                               onChange={() => toggleProperty(prop)}/>
+                        {prop.ruName}
+                    </label>
+                ))}
+            </div>
+        </>
     );
 };

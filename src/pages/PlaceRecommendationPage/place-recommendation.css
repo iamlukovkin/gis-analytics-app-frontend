@@ -1,0 +1,267 @@
+.recommend-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    background: #0c0c0c;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-panel {
+    position: absolute;
+    top: calc(var(--navbar-height) + var(--map-preferences-margin));
+    height: calc(100% - var(--navbar-height) - var(--map-preferences-margin) * 2);
+    overflow-y: scroll;
+    margin-left: var(--map-preferences-margin);
+    padding: var(--map-preferences-padding);
+    background: linear-gradient(45deg, rgba(38, 0, 99, 0.16), rgba(122, 108, 0, 0.16));
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    gap: 18px;
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 20px rgba(192, 154, 255, 0.25);
+
+    width: 440px;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Контейнер сообщений */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 6px;
+}
+
+/* Сообщение */
+/* Сообщения чата — перенос текста */
+.chat-message {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 15px;
+    line-height: 1.5;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0.95;
+    transition: 0.3s;
+
+    /* Добавляем перенос */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap; /* сохраняет переносы и пробелы */
+}
+
+/* Карточка рекомендаций — перенос текста */
+.recommend-address,
+.recommend-reasons li,
+.recommend-stats p,
+.recommend-score {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+/* Кнопки с длинным текстом */
+.recommend-btn,
+.chat-input button {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.chat-input textarea {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 15px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+
+/* Сообщение ИИ */
+.chat-message.bot {
+    align-self: flex-start;
+    background: rgba(106, 0, 255, 0.12);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(106, 0, 255, 0.2);
+}
+
+/* Сообщение пользователя */
+.chat-message.user {
+    align-self: flex-end;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.18);
+}
+
+/* Сообщение-загрузка */
+.chat-message.loading {
+    font-style: italic;
+    color: #cfa8ff;
+    animation: blink 0.8s infinite;
+}
+
+/* Анимация мерцания */
+@keyframes blink {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+/* Поле ввода */
+.chat-input {
+    display: flex;
+    gap: 12px;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 15px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.chat-input button {
+    padding: 12px 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.06);
+    cursor: pointer;
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    transition: 0.25s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+.chat-input button:hover {
+    background: rgba(255,255,255,0.16);
+    border-color: rgba(255,255,255,0.5);
+}
+
+
+/* Карта */
+.recommend-map {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Правая панель результата */
+.recommend-panel {
+    position: absolute;
+    top: calc(var(--navbar-height) + var(--map-preferences-margin));
+    right: var(--map-preferences-padding);
+    height: calc(100% - var(--navbar-height) - var(--map-preferences-margin) * 2);
+    overflow-y: scroll;
+    margin-left: var(--map-preferences-margin);
+    padding: var(--map-preferences-padding);
+    background: linear-gradient(45deg, rgba(38, 0, 99, 0.16), rgba(122, 108, 0, 0.16));
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    gap: 18px;
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 20px rgba(192, 154, 255, 0.25);
+
+    width: 560px;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.recommend-panel h2 {
+    font-size: 26px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 10px rgba(180, 140, 255, 0.4);
+}
+
+.recommend-address {
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+.recommend-score {
+    font-size: 18px;
+    margin-bottom: 18px;
+}
+.recommend-score span {
+    color: #ffd059;
+    font-weight: 700;
+}
+
+.recommend-stats p {
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+.recommend-stats {
+    margin-bottom: 26px;
+}
+
+.recommend-reasons h3 {
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+.recommend-reasons ul {
+    margin-left: 14px;
+    margin-bottom: 32px;
+}
+.recommend-reasons li {
+    margin-bottom: 6px;
+    font-size: 15px;
+    opacity: 0.92;
+}
+
+/* Кнопка аналитики */
+.recommend-btn {
+    display: block;
+    margin-top: 14px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.08);
+    cursor: pointer;
+    color: white;
+    font-size: 17px;
+    transition: 0.25s;
+}
+.recommend-btn:hover {
+    background: rgba(255,255,255,0.18);
+}
+
+@media (max-width: 1050px) {
+    .recommend-panel {
+        display: none;
+    }
+}
+
+@media (max-width: 780px) {
+    .chat-panel {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.12);
+        height: 45%;
+    }
+    .recommend-map {
+        height: 55%;
+    }
+}

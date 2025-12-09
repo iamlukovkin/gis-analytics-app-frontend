@@ -6,11 +6,11 @@ import "./map.css";
 import config from '../../services/config.ts';
 import type {Category, ColorRampKey, FeatureProperties, Property, Region} from "../../@types";
 import type {FeatureCollection} from "geojson";
-import {generateGrid, getCurrentPropertyPoints, getUserRegions, setNewSource} from "../../services";
-import {MapControls} from "../MapControls";
-import {CategoriesControl, GridResolutionControl, HeatmapColorControl, UserRegionControl} from "../MapControls/control"
+import {generateGrid, getColorRamp, getCurrentPropertyPoints, getUserRegions, setNewSource} from "../../services";
+import {CategoriesControl, GridResolutionControl, HeatmapColorControl, UserRegionControl} from "./Controls"
 
 const emptyMapData: FeatureCollection = {type: "FeatureCollection", features: []}
+
 
 export function Map() {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -28,6 +28,7 @@ export function Map() {
 
     useEffect(() => {
         mapSdk.config.apiKey = config.MAPTILER_API_KEY;
+        mapSdk.config.primaryLanguage = mapSdk.Language.RUSSIAN;
     }, []);
 
     useEffect(() => {
@@ -55,7 +56,7 @@ export function Map() {
         mapRef.current?.on("load", () => {
             const {heatmapLayerId: layerId, heatmapSourceId: srcId} = mapSdk.helpers.addHeatmap(mapRef.current!, {
                 data: emptyMapData,
-                colorRamp: mapSdk.ColorRampCollection[selectedColorRamp].scale(0, 30),
+                colorRamp: getColorRamp(selectedColorRamp),
                 opacity: 0.8,
             });
             mapSourcesRef.current = [{src: srcId, layer: layerId}];
@@ -114,7 +115,7 @@ export function Map() {
         })
         const {heatmapLayerId: layerId, heatmapSourceId: srcId} = mapSdk.helpers.addHeatmap(map, {
             data: mapData,
-            colorRamp: mapSdk.ColorRampCollection[colorRamp].scale(0, 30),
+            colorRamp: getColorRamp(colorRamp),
             opacity: 0.8,
         });
         mapSourcesRef.current = [{src: srcId, layer: layerId}];
@@ -140,7 +141,9 @@ export function Map() {
         const checkProps = new Set(newProperties.map(p => p.fullName));
         setVisibleData({
             ...mapData,
-            features: mapData.features.filter(f => checkProps.has((f.properties as FeatureProperties).property_value))
+            features: mapData.features
+                .filter(f => checkProps
+                    .has((f.properties as FeatureProperties).property_value))
         });
     }, [mapData]);
 
@@ -151,32 +154,39 @@ export function Map() {
             if (!selectedCategory) return;
             const categoryName = selectedCategory.sourceArgument;
             const propIds = selectedCategory.properties.map(prop => prop.id);
-            getCurrentPropertyPoints(categoryName, propIds, config.INIT_CITY.lat, config.INIT_CITY.lon)
+            if (!region) throw Error("Region OSM id is undefined");
+            getCurrentPropertyPoints(categoryName, propIds, region?.osmId)
                 .then(response => {
                     setMapData(response || emptyMapData);
                 })
                 .catch(console.error);
         })
-    }, [changeMapData, mapReady, selectedCategory]);
+    }, [changeMapData, mapReady, region, selectedCategory]);
+
+    const elements = document.getElementsByClassName(config.MUST_BE_DISABLE_CLASSNAME);
+    for (const element of elements) (element as HTMLElement).style.display = 'none';
 
     return (
-        <div style={{display: 'flex', flexDirection: 'row'}}>
-            <MapControls>
-                <h1>Map Controls</h1>
-                <div>
-                    <h2>Categories</h2>
+        <div className={'map-content-wrapper'}>
+            <div className={'map-preferences'}>
+                <div className={'map-controls'}>
+                    <h2>Выбранные категории</h2>
                     <CategoriesControl onSelectCategory={onSelectCategory} onSelectProperties={onSelectProperties}/>
+                </div>
+                <div className={'map-controls'}>
+                    <h2>Параметры отображения</h2>
                     <HeatmapColorControl
                         selectedColorRamp={selectedColorRamp}
                         colorOptions={Object.keys(mapSdk.ColorRampCollection) as ColorRampKey[]}
-                        onSelectColorRamp={(color) => changeColorOfHeatMap(color)}/>
-                </div>
-                <div>
-                    <h2>Map preferences</h2>
-                    <GridResolutionControl gridResolution={gridResolution} setGridResolution={setGridResolution}/>
+                        onSelectColorRamp={
+                            (color) => changeColorOfHeatMap(color)
+                        }/>
+                    <GridResolutionControl
+                        gridResolution={gridResolution}
+                        setGridResolution={setGridResolution}/>
                     <UserRegionControl regions={allUserRegions} setRegion={changeRegion}/>
                 </div>
-            </MapControls>
+            </div>
             <div className={"container"}>
                 <div ref={mapContainerRef} id={"map"} className={"map"}/>
             </div>
